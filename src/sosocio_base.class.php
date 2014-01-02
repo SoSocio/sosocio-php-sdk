@@ -88,10 +88,11 @@ class sosocio_base{
 	 * @return array curl options
 	 */
 	private function setCurlOptions() {
-		# Get default curl options
-		$curlOptions = $this->getDefaultCurlOptions();
 		# Set method of curl request
 		$curlOptions[CURLOPT_CUSTOMREQUEST] = strtoupper($this->arrData['method']);
+
+		# Get default curl options
+		$curlOptions = $this->getDefaultCurlOptions();
 		
 		if(isset($this->arrData['inputdata']['files'])) {
 		
@@ -111,7 +112,7 @@ class sosocio_base{
 		}
 		else {
 			if(count($this->arrData['inputdata'])){
-				$opts[CURLOPT_POSTFIELDS] = json_encode($this->arrData['inputdata']);
+				$curlOptions[CURLOPT_POSTFIELDS] = json_encode($this->arrData['inputdata']);
 			}
 		}
 
