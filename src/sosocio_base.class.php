@@ -88,12 +88,13 @@ class sosocio_base{
 	 * @return array curl options
 	 */
 	private function setCurlOptions() {
-		# Set method of curl request
-		$curlOptions[CURLOPT_CUSTOMREQUEST] = strtoupper($this->arrData['method']);
 
 		# Get default curl options
 		$curlOptions = $this->getDefaultCurlOptions();
 		
+		# Set method of curl request
+		$curlOptions[CURLOPT_CUSTOMREQUEST] = strtoupper($this->arrData['method']);
+	
 		if(isset($this->arrData['inputdata']['files'])) {
 		
 			# Get files from api request
