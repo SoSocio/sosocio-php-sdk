@@ -57,16 +57,16 @@ class sosocio_base{
 		# Add request endpoint path to final URL
 		$finalUrl .= $urlParts['path'];
 		
-		# If we want to make sure we have 'fresh' results, add live=1 to URL
-		if($this->caching){
-			if(!empty($urlParts['query'])){
-				$finalUrl .= '?live=1&'.$urlParts['query'];
-			}
-		}
-		else{
-			if(isset($urlParts['query'])){
-				$finalUrl .= '?'.$urlParts['query'];
-			}
+		if(isset($urlParts['query'])){
+			
+			# If we want to make sure we have 'fresh' results, add live=1 to URL			
+			$urlParts['query'] = ($this->caching) ? 'live=1&'.$urlParts['query'] : $urlParts['query'];
+			
+			# Parse the query string 
+			parse_str($urlParts['query'],$arrQueryParts);
+			
+			$finalUrl .= '?'.http_build_query($arrQueryParts); 
+			
 		}
 
 		# Return final url
@@ -150,6 +150,7 @@ class sosocio_base{
 	 * 
 	 */
 	private function executeCurl($url){
+		
 		# Initialize Curl request
 		$ch = curl_init($url);
 	
