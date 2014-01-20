@@ -66,12 +66,12 @@ class sosocio_base{
 			}
 		}
 		
-		# Parse the query string 
-		parse_str($urlParts['query'],$arrQueryParts);
-		
-		$finalUrl .= '?'.http_build_query($arrQueryParts); 
-
-		echo $finalUrl."<br>";
+		if(isset($urlParts['query'])){
+			# Parse the query string 
+			parse_str($urlParts['query'],$arrQueryParts);
+			
+			$finalUrl .= '?'.http_build_query($arrQueryParts); 
+		}
 		
 		# Return final url
 		return $finalUrl;
