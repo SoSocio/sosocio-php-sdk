@@ -57,16 +57,21 @@ class sosocio_base{
 		# Add request endpoint path to final URL
 		$finalUrl .= $urlParts['path'];
 		
-		if($this->caching){
-			$urlParts['query'] = (!isset($urlParts['query'])) ? '?live=1' : $urlParts['query'];
+        if($this->caching){
+			if(!empty($urlParts['query'])){
+            	$urlParts['query'] = 'live=1&'.$urlParts['query'];
+			}
+			else{
+				$urlParts['query'] = 'live=1';
+			}
 		}
-			
+		
 		# Parse the query string 
-		if(isset($urlParts['query'])){
-			parse_str($urlParts['query'],$arrQueryParts);
-			
-			$finalUrl .= '?'.http_build_query($arrQueryParts); 
-		}
+		parse_str($urlParts['query'],$arrQueryParts);
+		
+		$finalUrl .= '?'.http_build_query($arrQueryParts); 
+
+		echo $finalUrl."<br>";
 		
 		# Return final url
 		return $finalUrl;
