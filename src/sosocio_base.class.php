@@ -58,7 +58,7 @@ class sosocio_base{
 		$finalUrl .= $urlParts['path'];
 		
         if($this->caching){
-			if(!empty($urlParts['query'])){
+			if(isset($urlParts['query'])){
             	$urlParts['query'] = 'live=1&'.$urlParts['query'];
 			}
 			else{
