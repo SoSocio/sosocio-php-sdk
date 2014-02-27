@@ -44,5 +44,14 @@ class sosocio extends sosocio_base{
 			$this->caching = $caching;
 		}
 	}
+	
+	/**
+	* Set curl timeout in seconds
+	* 
+	* @param int $timeout
+	*/
+	public function setCurlTimeOut($timeout){
+		$this->curlTimeOut = $timeout;
+	}
 }
 ?>
