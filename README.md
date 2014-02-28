@@ -19,6 +19,5 @@ $conditions = array(
 	'offset' => 5
 );
 
-
 $sosocio->api('/products','GET',$conditions);
 ```
