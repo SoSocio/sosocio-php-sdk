@@ -184,6 +184,8 @@ class sosocio_base{
 	protected function addConditions($url, $conditions){
 		$urlParts = parse_url($url);
 		
+		$arrayKeys = array_keys($conditions);
+
 		if(!is_array($conditions)){
 			return $url;
 		}
@@ -192,15 +194,17 @@ class sosocio_base{
 			# Parse the query string 
 			parse_str($urlParts['query'],$arrQueryParts);
 			
-			if(!array_key_exists('where',$conditions) && count($conditions)){
-				$arrQueryParts['where'] = json_encode($conditions);
-				
-				$url = '?'.http_build_query($arrQueryParts);
-			}
-			elseif(array_key_exists('where',$arrQueryParts) && count($conditions)){
+			if(array_key_exists('where',$arrQueryParts) && count($conditions)){
 				throw new Exception('Either set the where conditions in the URL or the third argument in the api function call');
 			}
 		}
+		elseif(in_array('where',$arrayKeys) && count($conditions)){
+			
+			$conditions['where'] = json_encode($conditions['where']);
+			
+			$url = '?'.http_build_query($conditions);
+		}
+		
 		return $url;
 	}
 
