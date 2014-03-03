@@ -202,7 +202,7 @@ class sosocio_base{
 			
 			$conditions['where'] = json_encode($conditions['where']);
 			
-			$url = '?'.http_build_query($conditions);
+			$url .= '?'.http_build_query($conditions);
 		}
 		
 		return $url;
