@@ -55,5 +55,19 @@ class sosocio extends sosocio_base{
 			$this->caching = $caching;
 		}
 	}
+	
+	/**
+	* Set curl timeout in seconds
+	* 
+	* @param int $timeout
+	*/
+	public function setCurlTimeOut($timeout){
+		if(!is_integer($timeout)){
+			throw new Exception('The parameter must be an integer');
+		}
+		else{
+			$this->curlTimeOut = $timeout;
+		}
+	}
 }
 ?>

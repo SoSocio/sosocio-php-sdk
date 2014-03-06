@@ -18,6 +18,10 @@ class sosocio_base{
 	protected $apiSecret;
 	# Flag to disable cached results
 	protected $caching = true;
+	
+	# Curl timeout
+	protected $curlTimeOut = 60;
+	
 	# Request data
 	private $arrData;
 
@@ -36,7 +40,7 @@ class sosocio_base{
 		return array(
 			CURLOPT_CONNECTTIMEOUT => 10,
 			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_TIMEOUT        => 60,
+			CURLOPT_TIMEOUT        => $this->curlTimeOut,
 			CURLOPT_USERAGENT      => 'sosocio',
 			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret)
 		);
