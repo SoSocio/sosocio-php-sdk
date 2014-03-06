@@ -20,25 +20,20 @@ class sosocio extends sosocio_base{
 	 */
 	public function api($url,$method='GET',$args=array()) {
 		
+		$params = array(
+			'method' => $method
+		);
+		
 		# Set parameters for request
 		switch(strtoupper($method)){
 			case 'GET':
-			
 				if(count($args) > 0) {
 					$url = $this->addConditions($url,$args);
 				}
-			
-				$params = array(
-					'method' => $method
-				);
 				break;
 			case 'PUT':
 			case 'POST':
-				$params = array(
-					'method' => $method,
-					'inputdata' =>	$args
-				);
-			
+				$params['inputdata'] = $args;			
 		}
 
 		# Return result set

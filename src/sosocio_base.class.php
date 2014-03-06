@@ -182,13 +182,12 @@ class sosocio_base{
 	* @param array $conditions
 	*/
 	protected function addConditions($url, $conditions){
-		$urlParts = parse_url($url);
-		
-		$arrayKeys = array_keys($conditions);
-
 		if(!is_array($conditions)){
 			return $url;
 		}
+		
+		$urlParts = parse_url($url);
+		$arrayKeys = array_keys($conditions);
 		
 		if(isset($urlParts['query'])){
 			# Parse the query string 
