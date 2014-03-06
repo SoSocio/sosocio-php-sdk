@@ -200,14 +200,16 @@ class sosocio_base{
 			if(array_key_exists('where',$arrQueryParts) && count($conditions)){
 				throw new Exception('Either set the where conditions in the URL or the third argument in the api function call');
 			}
+			
+			return $url;
 		}
 		elseif(in_array('where',$arrayKeys) && count($conditions)){
 			
 			$conditions['where'] = json_encode($conditions['where']);
-			
-			$url .= '?'.http_build_query($conditions);
 		}
-		
+
+		$url .= '?'.http_build_query($conditions);
+	
 		return $url;
 	}
 
