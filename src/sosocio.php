@@ -14,19 +14,30 @@ class sosocio extends sosocio_base{
 	 * 
 	 * @param str url: the request endpoint
 	 * @param str method: the method of the request (GET,POST,PUT,DELETE)
+	 * @param array args: POST,PUT: data | GET: where condition
 	 * 
 	 * @return array result: the result set from the API request
 	 */
-	public function api($url,$method='GET',$data=array()) {
+	public function api($url,$method='GET',$args=array()) {
+		
+		$params = array(
+			'method' => $method
+		);
 		
 		# Set parameters for request
-		$parameters = array(
-			'method' => $method,
-			'inputdata' =>	$data
-		);
+		switch(strtoupper($method)){
+			case 'GET':
+				if(count($args) > 0) {
+					$url = $this->addConditions($url,$args);
+				}
+				break;
+			case 'PUT':
+			case 'POST':
+				$params['inputdata'] = $args;			
+		}
 
 		# Return result set
-		return $this->makeRequest($url,$parameters);
+		return $this->makeRequest($url,$params);
 	}
 	
 	/**

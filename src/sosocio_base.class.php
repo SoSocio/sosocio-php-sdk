@@ -54,8 +54,11 @@ class sosocio_base{
 		$finalUrl  = $this->serverUrl;
 		# Analyze request endpoint
 		$urlParts = parse_url($url);
+	
 		# Add request endpoint path to final URL
-		$finalUrl .= $urlParts['path'];
+		if(isset($urlParts['path']) && !empty($urlParts['path'])){
+			$finalUrl .= $urlParts['path'];
+		}
 		
         if($this->caching){
 			if(isset($urlParts['query'])){
@@ -70,7 +73,7 @@ class sosocio_base{
 			# Parse the query string 
 			parse_str($urlParts['query'],$arrQueryParts);
 			
-			$finalUrl .= '?'.http_build_query($arrQueryParts); 
+			$finalUrl .= '?'.http_build_query($arrQueryParts);
 		}
 		
 		# Return final url
@@ -170,6 +173,38 @@ class sosocio_base{
 
 		# Close curl request
 	    curl_close($ch);
+	}
+	
+	/**
+	* Add where conditions
+	* 
+	* @param string $url
+	* @param array $conditions
+	*/
+	protected function addConditions($url, $conditions){
+		if(!is_array($conditions)){
+			return $url;
+		}
+		
+		$urlParts = parse_url($url);
+		$arrayKeys = array_keys($conditions);
+		
+		if(isset($urlParts['query'])){
+			# Parse the query string 
+			parse_str($urlParts['query'],$arrQueryParts);
+			
+			if(array_key_exists('where',$arrQueryParts) && count($conditions)){
+				throw new Exception('Either set the where conditions in the URL or the third argument in the api function call');
+			}
+		}
+		elseif(in_array('where',$arrayKeys) && count($conditions)){
+			
+			$conditions['where'] = json_encode($conditions['where']);
+			
+			$url .= '?'.http_build_query($conditions);
+		}
+		
+		return $url;
 	}
 
 }
