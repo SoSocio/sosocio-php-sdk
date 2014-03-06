@@ -169,7 +169,6 @@ class sosocio_base{
 		# Execute curl and store result in class result property
 	    $this->result = curl_exec($ch);
 
-	    echo curl_error($ch);
 	    # Decode the result set
 		$this->decodeJSON();
 
