@@ -16,8 +16,6 @@ class sosocio_base{
 	protected $apiKey;
 	# API user secret
 	protected $apiSecret;
-	# Flag to disable cached results
-	protected $caching = true;
 	
 	# Curl timeout
 	protected $curlTimeOut = 60;
@@ -62,15 +60,6 @@ class sosocio_base{
 		# Add request endpoint path to final URL
 		if(isset($urlParts['path']) && !empty($urlParts['path'])){
 			$finalUrl .= $urlParts['path'];
-		}
-		
-        if($this->caching){
-			if(isset($urlParts['query'])){
-            	$urlParts['query'] = 'live=1&'.$urlParts['query'];
-			}
-			else{
-				$urlParts['query'] = 'live=1';
-			}
 		}
 		
 		if(isset($urlParts['query'])){

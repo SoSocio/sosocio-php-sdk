@@ -41,22 +41,6 @@ class sosocio extends sosocio_base{
 	}
 	
 	/**
-	 * Set caching
-	 * enable caching for faster results
-	 * 
-	 * @param bool caching
-	 * 
-	 */
-	public function setCaching($caching){
-		if(!is_bool($caching)){
-			throw new Exception('The parameter must be a boolean');
-		}
-		else{
-			$this->caching = $caching;
-		}
-	}
-	
-	/**
 	* Set curl timeout in seconds
 	* 
 	* @param int $timeout
