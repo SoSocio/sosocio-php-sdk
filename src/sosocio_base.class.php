@@ -20,6 +20,12 @@ class sosocio_base{
 	# Curl timeout
 	protected $curlTimeOut = 60;
 	
+	# Total record count api
+	protected $totalRecords;
+	
+	# Pagination api
+	protected $pagination;
+	
 	# Request data
 	private $arrData;
 
