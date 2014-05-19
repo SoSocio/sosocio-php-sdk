@@ -20,6 +20,12 @@ class sosocio_base{
 	# Curl timeout
 	protected $curlTimeOut = 60;
 	
+	# Total record count api
+	public $totalRecords;
+	
+	# Pagination api
+	public $pagination;
+	
 	# Request data
 	private $arrData;
 
@@ -40,6 +46,7 @@ class sosocio_base{
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_TIMEOUT        => $this->curlTimeOut,
 			CURLOPT_USERAGENT      => 'sosocio',
+			CURLOPT_HEADER => true,
 			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret)
 		);
 	}
@@ -143,6 +150,28 @@ class sosocio_base{
 	    return $this->result;
 	}
 
+	private function formatResponseHeaders(){
+		$headers = array();
+        foreach (explode("\r\n", $this->responseHeaders) as $i => $line){
+	        if ($i === 0)
+	            $headers['http_code'] = $line;
+	        else
+	        {
+	            list ($key, $value) = explode(': ', $line);
+
+	            $headers[$key] = $value;
+	        }
+		}
+
+		$this->pagination = array(
+			'previous' => isset($headers['X-Pagination-Previous']) ? $headers['X-Pagination-Previous'] : false,
+			'next' => isset($headers['X-Pagination-Next']) ? $headers['X-Pagination-Next'] : false,
+		);
+		
+		$this->totalRecords = isset($headers['X-Total-Records']) ? $headers['X-Total-Records'] : false;
+
+	}
+	
 	/**
 	 * Execute Curl request
 	 * 
@@ -153,14 +182,16 @@ class sosocio_base{
 		
 		# Initialize Curl request
 		$ch = curl_init($url);
-	
+
 		# Set curl request options
 		$opts = $this->setCurlOptions();
 	    curl_setopt_array($ch, $opts);
-		
-		# Execute curl and store result in class result property
-	    $this->result = curl_exec($ch);
 
+		# Execute curl and store result in class result property
+    	list($this->responseHeaders,$this->result) = explode("\r\n\r\n",curl_exec($ch),2);
+	    
+	    $this->formatResponseHeaders();
+	    
 	    # Decode the result set
 		$this->decodeJSON();
 
