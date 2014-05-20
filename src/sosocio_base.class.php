@@ -190,22 +190,16 @@ class sosocio_base{
 		# Execute curl and store result in class result property
 		$curlResult = explode("\r\n\r\n",curl_exec($ch));
 		
-		# Some times there are more headers
-		if(count($curlResult)>2){
-			# Json response is always the last entry
-			$this->result = end($curlResult);
+		# Json response is always the last entry
+		$this->result = end($curlResult);
 
-			# Unset the result key
-			unset($curlResult[key($curlResult)]);
-			# Reset array pointer
-			reset($curlResult);
+		# Unset the result key
+		unset($curlResult[key($curlResult)]);
+		# Reset array pointer
+		reset($curlResult);
 			
-			foreach($curlResult as $index => $result){
-				$this->responseHeaders .= $curlResult;
-			}
-		}
-		else{
-			list($this->responseHeaders,$this->result) = $curlResult;
+		foreach($curlResult as $index => $result){
+			$this->responseHeaders .= $curlResult;
 		}
 	    
 	    $this->formatResponseHeaders();
