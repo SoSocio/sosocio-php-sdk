@@ -33,6 +33,7 @@ class sosocio extends sosocio_base{
 				break;
 			case 'PUT':
 			case 'POST':
+			case 'DELETE':
 				$params['inputdata'] = $args;			
 		}
 
