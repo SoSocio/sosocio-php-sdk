@@ -195,9 +195,11 @@ class sosocio_base{
 
 		# Unset the result key
 		unset($curlResult[key($curlResult)]);
+		
 		# Reset array pointer
 		reset($curlResult);
-			
+		
+		# Build the response headers
 		foreach($curlResult as $index => $result){
 			$this->responseHeaders .= $curlResult;
 		}
