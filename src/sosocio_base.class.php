@@ -200,8 +200,10 @@ class sosocio_base{
 		reset($curlResult);
 		
 		# Build the response headers
-		foreach($curlResult as $index => $result){
-			$this->responseHeaders .= $curlResult;
+		if(count($curlResult)){
+			foreach($curlResult as $index => $result){
+				$this->responseHeaders .= $curlResult;
+			}
 		}
 	    
 	    $this->formatResponseHeaders();
