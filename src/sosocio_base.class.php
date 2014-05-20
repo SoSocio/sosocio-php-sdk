@@ -188,7 +188,21 @@ class sosocio_base{
 	    curl_setopt_array($ch, $opts);
 
 		# Execute curl and store result in class result property
-    	list($this->responseHeaders,$this->result) = explode("\r\n\r\n",curl_exec($ch),2);
+		$curlResult = explode("\r\n\r\n",curl_exec($ch));
+		
+		# Json response is always the last entry
+		$this->result = end($curlResult);
+
+		# Unset the result key
+		unset($curlResult[key($curlResult)]);
+		
+		# Reset array pointer
+		reset($curlResult);
+		
+		# Build the response headers
+		foreach($curlResult as $index => $result){
+			$this->responseHeaders .= $curlResult;
+		}
 	    
 	    $this->formatResponseHeaders();
 	    
