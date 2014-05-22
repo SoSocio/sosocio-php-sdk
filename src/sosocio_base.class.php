@@ -202,7 +202,7 @@ class sosocio_base{
 		# Build the response headers
 		if(count($curlResult)){
 			foreach($curlResult as $index => $result){
-				$this->responseHeaders .= $curlResult;
+				$this->responseHeaders .= $result;
 			}
 		}
 	    
