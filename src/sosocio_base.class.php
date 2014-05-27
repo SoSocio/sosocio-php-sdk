@@ -157,8 +157,8 @@ class sosocio_base{
         foreach (explode("\r\n", $this->responseHeaders) as $i => $line){
 	        if ($i === 0)
 	            $headers['http_code'] = $line;
-	        else
-	        {
+	        elseif(!empty($line)){
+	        	
 	            list ($key, $value) = explode(': ', $line);
 
 	            $headers[$key] = $value;
@@ -190,24 +190,13 @@ class sosocio_base{
 	    curl_setopt_array($ch, $opts);
 
 		# Execute curl and store result in class result property
-		$curlResult = explode("\r\n\r\n",curl_exec($ch));
+		$curlResponse = curl_exec($ch);
 		
-		# Json response is always the last entry
-		$this->result = end($curlResult);
+		$header_size 			= curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$this->responseHeaders 	= substr($curlResponse, 0, $header_size);
+		$this->result 			= substr($curlResponse, $header_size);
 
-		# Unset the result key
-		unset($curlResult[key($curlResult)]);
-		
-		# Reset array pointer
-		reset($curlResult);
-		
-		# Build the response headers
-		if(count($curlResult)){
-			foreach($curlResult as $index => $result){
-				$this->responseHeaders .= $result;
-			}
-		}
-	    
+		# Format headers		
 	    $this->formatResponseHeaders();
 	    
 	    # Decode the result set
