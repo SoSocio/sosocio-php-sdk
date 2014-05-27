@@ -26,6 +26,8 @@ class sosocio_base{
 	# Pagination api
 	public $pagination;
 	
+	private $responseHeaders;
+	
 	# Request data
 	private $arrData;
 
