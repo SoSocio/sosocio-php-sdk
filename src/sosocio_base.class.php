@@ -82,13 +82,30 @@ class sosocio_base{
 		return $finalUrl;
 	}
 	
+	private function handleError(){
+		if(count($this->result)>1){
+			$error = array();
+			foreach($this->result as $result){
+				if(array_key_exists('error',$result)){
+					array_push($error,$result['error']);
+				}
+			}
+			throw new Exception(implode("\r\n",$error));
+		}
+		else{
+			if(array_key_exists('error',$this->result)){
+				throw new Exception($this->result['error']);
+			}			
+		}
+	}
+	
 	/**
 	 * Decode JSON result from API
 	 * 
 	 */
-	private function decodeJSON(){
+	private function decodeJSON($result){
 		# Decode JSON and set result array to result property
-		$this->result = json_decode($this->result,true);
+		$this->result = json_decode($result,true);
 	}
 
 	/**
@@ -194,14 +211,17 @@ class sosocio_base{
 		
 		$header_size 			= curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 		$this->responseHeaders 	= substr($curlResponse, 0, $header_size);
-		$this->result 			= substr($curlResponse, $header_size);
-
+		$result 				= substr($curlResponse, $header_size);
+		
 		# Format headers		
 	    $this->formatResponseHeaders();
 	    
 	    # Decode the result set
-		$this->decodeJSON();
+		$this->decodeJSON($result);
 
+		# Uses the result set in the decodeJSON method
+		$this->handleError();
+		
 		# Close curl request
 	    curl_close($ch);
 	}
