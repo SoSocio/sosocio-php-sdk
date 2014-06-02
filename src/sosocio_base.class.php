@@ -95,6 +95,9 @@ class sosocio_base{
 		else{
 			if(array_key_exists('error',$this->result)){
 				throw new Exception($this->result['error']);
+			}
+			elseif(is_null($this->result)){
+				throw new Exception('Error occured on the api');
 			}			
 		}
 	}
