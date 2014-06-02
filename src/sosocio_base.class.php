@@ -85,17 +85,20 @@ class sosocio_base{
 	private function handleError(){
 
 		$error = array();
-		foreach($this->result as $result){
-			if(is_array($result) && array_key_exists('error',$result)){
-				array_push($error,$result['error']);
+		if(is_array($this->result)){
+			foreach($this->result as $result){
+				if(is_array($result) && array_key_exists('error',$result)){
+					array_push($error,$result['error']);
+				}
 			}
 		}
+		else{
+			throw new Exception('Error occured on the api');
+		}
+
 		if(!count($error)){
 			if(array_key_exists('error',$this->result)){
 				throw new Exception(implode("\r\n",$this->result['error']));	
-			}
-			elseif(is_null($this->result)){
-				throw new Exception('Error occured on the api');
 			}
 		}
 		else{
