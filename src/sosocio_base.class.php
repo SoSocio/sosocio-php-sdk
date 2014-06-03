@@ -154,16 +154,15 @@ class sosocio_base{
 
 	private function formatResponseHeaders(){
 		$headers = array();
-		$explodedHeaders = explode("\r\n", $this->responseHeaders);
-        foreach($explodedHeaders as $i => $line){
-	        if ($i === 0) {
-	            $headers['http_code'] = $line;
-			}
-	        elseif(!empty($line) && strpos($line, ': ') !== FALSE) {
-	        	list($key, $value) = explode(': ', $line);
-	            $headers[$key] = $value;
-	        }
-		}
+		$explodedHeaders = explode("\n", $this->responseHeaders);
+
+        foreach ($explodedHeaders as $i => $h) {
+            $h = explode(':', $h, 2);
+           
+            if (isset($h[1])) {
+                $headers[$h[0]] = trim($h[1]);
+            }
+        }
 
 		$this->pagination = array(
 			'previous' => isset($headers['X-Pagination-Previous']) ? $headers['X-Pagination-Previous'] : false,
