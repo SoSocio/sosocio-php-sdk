@@ -156,12 +156,11 @@ class sosocio_base{
 		$headers = array();
 		$explodedHeaders = explode("\r\n", $this->responseHeaders);
         foreach($explodedHeaders as $i => $line){
-	        if ($i === 0)
+	        if ($i === 0) {
 	            $headers['http_code'] = $line;
-	        elseif(!empty($line)){
-	        	
-	            list ($key, $value) = explode(': ', $line);
-
+			}
+	        elseif(!empty($line) && strpos($line, ': ') >= 0) {
+	        	list($key, $value) = explode(': ', $line);
 	            $headers[$key] = $value;
 	        }
 		}
