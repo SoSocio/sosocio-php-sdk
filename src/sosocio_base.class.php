@@ -154,7 +154,8 @@ class sosocio_base{
 
 	private function formatResponseHeaders(){
 		$headers = array();
-        foreach (explode("\r\n", $this->responseHeaders) as $i => $line){
+		$explodedHeaders = explode("\r\n", $this->responseHeaders);
+        foreach($explodedHeaders as $i => $line){
 	        if ($i === 0)
 	            $headers['http_code'] = $line;
 	        elseif(!empty($line)){
