@@ -159,7 +159,7 @@ class sosocio_base{
 	        if ($i === 0) {
 	            $headers['http_code'] = $line;
 			}
-	        elseif(!empty($line) && strpos($line, ': ') >= 0) {
+	        elseif(!empty($line) && strpos($line, ': ') !== FALSE) {
 	        	list($key, $value) = explode(': ', $line);
 	            $headers[$key] = $value;
 	        }
