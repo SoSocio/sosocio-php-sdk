@@ -49,7 +49,7 @@ class sosocio_base{
 			CURLOPT_TIMEOUT        => $this->curlTimeOut,
 			CURLOPT_USERAGENT      => 'sosocio',
 			CURLOPT_HEADER => true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret)
+			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest')
 		);
 	}
 
@@ -218,7 +218,7 @@ class sosocio_base{
 		$header_size 			= curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 		$this->responseHeaders 	= substr($curlResponse, 0, $header_size);
 		$result 				= substr($curlResponse, $header_size);
-		
+
 		# Format headers		
 	    $this->formatResponseHeaders();
 	    
