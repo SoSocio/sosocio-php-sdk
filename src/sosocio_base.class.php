@@ -256,7 +256,7 @@ class sosocio_base{
 			
 			return $url;
 		}
-		elseif(in_array('where',$arrayKeys) && count($conditions)){
+		elseif(in_array('where',$arrayKeys) && isset($conditions['where'])){
 			
 			$conditions['where'] = json_encode($conditions['where']);
 		}
