@@ -239,31 +239,58 @@ class sosocio_base{
 	* @param array $conditions
 	*/
 	protected function addConditions($url, $conditions){
+		
+		# If no conditions, return the url with all its conditions
 		if(!is_array($conditions)){
 			return $url;
 		}
 		
+		# Parse the url so we can get all conditions
 		$urlParts = parse_url($url);
-		$arrayKeys = array_keys($conditions);
-		
-		if(isset($urlParts['query'])){
-			# Parse the query string 
-			parse_str($urlParts['query'],$arrQueryParts);
-			
-			if(array_key_exists('where',$arrQueryParts) && count($conditions)){
-				throw new Exception('Either set the where conditions in the URL or the third argument in the api function call');
-			}
-			
-			return $url;
+				
+		# Convert url conditions to array
+		if(isset($urlParts['path'])) {
+			# The endpoint of the API call without the extra conditions in the url
+			$urlEndpoint = $urlParts['path'];
 		}
-		elseif(in_array('where',$arrayKeys) && isset($conditions['where'])){
-			
+		else {
+			throw new Exception('Please provide an URL endpoint in SDK call');
+		}
+		
+		# Encode where conditions
+		if(isset($conditions['where'])) {
 			$conditions['where'] = json_encode($conditions['where']);
 		}
-
-		$url .= '?'.http_build_query($conditions);
-	
-		return $url;
+		
+		# Encode search conditions
+		if(isset($conditions['search'])) {
+			$conditions['search'] = json_encode($conditions['search']);
+		}
+		
+		# If there are extra conditions in the url, convert these
+		if(isset($urlParts['query'])){
+			# Parse the query string and store the (extra) conditions in $urlConditions
+			parse_str($urlParts['query'],$urlConditions);
+			
+			# Debugging info: SDK users cannot provide the same conditions via URL and SDK call
+			if(array_key_exists('where', $urlConditions) && array_key_exists('where', $conditions)) {
+				throw new Exception('Either provide where condition via url, or via SDK, cannot have both');
+			} 
+			if(array_key_exists('search', $urlConditions) && array_key_exists('search', $conditions)) {
+				throw new Exception('Either provide serach condition via url, or via SDK, cannot have both');
+			} 
+			if(array_key_exists('limit', $urlConditions) && array_key_exists('limit', $conditions)) {
+				throw new Exception('Either provide limit via url, or via SDK, cannot have both');
+			}
+			if(array_key_exists('orderby', $urlConditions) && array_key_exists('orderby', $conditions)) {
+				throw new Exception('Either provide orderby via url, or via SDK, cannot have both');
+			}
+			
+			# Merge SDK conditions and URL conditions
+			$conditions = array_merge($conditions, $urlConditions);
+		}
+		
+		return $urlEndpoint . '?'.http_build_query($conditions);
 	}
 
 }
