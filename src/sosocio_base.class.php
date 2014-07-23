@@ -273,17 +273,10 @@ class sosocio_base{
 			parse_str($urlParts['query'],$urlConditions);
 			
 			# Debugging info: SDK users cannot provide the same conditions via URL and SDK call
-			if(array_key_exists('where', $urlConditions) && array_key_exists('where', $conditions)) {
-				throw new Exception('Either provide where condition via url, or via SDK, cannot have both');
-			} 
-			if(array_key_exists('search', $urlConditions) && array_key_exists('search', $conditions)) {
-				throw new Exception('Either provide serach condition via url, or via SDK, cannot have both');
-			} 
-			if(array_key_exists('limit', $urlConditions) && array_key_exists('limit', $conditions)) {
-				throw new Exception('Either provide limit via url, or via SDK, cannot have both');
-			}
-			if(array_key_exists('orderby', $urlConditions) && array_key_exists('orderby', $conditions)) {
-				throw new Exception('Either provide orderby via url, or via SDK, cannot have both');
+			foreach($urlConditions as $key => $value){
+				if(array_key_exists($key,$urlConditions) && array_key_exists($key, $conditions)){
+					throw new Exception('Either provide '.$key.' condition via url, or via SDK, cannot have both');	
+				}
 			}
 			
 			# Merge SDK conditions and URL conditions
