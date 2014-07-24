@@ -16,6 +16,8 @@ class sosocio_base{
 	protected $apiKey;
 	# API user secret
 	protected $apiSecret;
+	# API bundle certificate for SSL
+	protected $bundleCertificate;
 	
 	# Curl timeout
 	protected $curlTimeOut = 60;
@@ -44,12 +46,13 @@ class sosocio_base{
 	 */
 	public function getDefaultCurlOptions(){
 		return array(
-			CURLOPT_CONNECTTIMEOUT => 10,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_TIMEOUT        => $this->curlTimeOut,
-			CURLOPT_USERAGENT      => 'sosocio',
-			CURLOPT_HEADER => true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest')
+			CURLOPT_CONNECTTIMEOUT	=> 10,
+			CURLOPT_RETURNTRANSFER	=> true,
+			CURLOPT_TIMEOUT			=> $this->curlTimeOut,
+			CURLOPT_USERAGENT		=> 'sosocio',
+			CURLOPT_HEADER 			=> true,
+			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest'),
+			CURLOPT_CAINFO			=> $this->bundleCertificate
 		);
 	}
 
@@ -239,31 +242,51 @@ class sosocio_base{
 	* @param array $conditions
 	*/
 	protected function addConditions($url, $conditions){
+		
+		# If no conditions, return the url with all its conditions
 		if(!is_array($conditions)){
 			return $url;
 		}
 		
+		# Parse the url so we can get all conditions
 		$urlParts = parse_url($url);
-		$arrayKeys = array_keys($conditions);
-		
-		if(isset($urlParts['query'])){
-			# Parse the query string 
-			parse_str($urlParts['query'],$arrQueryParts);
-			
-			if(array_key_exists('where',$arrQueryParts) && count($conditions)){
-				throw new Exception('Either set the where conditions in the URL or the third argument in the api function call');
-			}
-			
-			return $url;
+				
+		# Convert url conditions to array
+		if(isset($urlParts['path'])) {
+			# The endpoint of the API call without the extra conditions in the url
+			$urlEndpoint = $urlParts['path'];
 		}
-		elseif(in_array('where',$arrayKeys) && isset($conditions['where'])){
-			
+		else {
+			throw new Exception('Please provide an URL endpoint in SDK call');
+		}
+		
+		# Encode where conditions
+		if(isset($conditions['where'])) {
 			$conditions['where'] = json_encode($conditions['where']);
 		}
-
-		$url .= '?'.http_build_query($conditions);
-	
-		return $url;
+		
+		# Encode search conditions
+		if(isset($conditions['search'])) {
+			$conditions['search'] = json_encode($conditions['search']);
+		}
+		
+		# If there are extra conditions in the url, convert these
+		if(isset($urlParts['query'])){
+			# Parse the query string and store the (extra) conditions in $urlConditions
+			parse_str($urlParts['query'],$urlConditions);
+			
+			# Debugging info: SDK users cannot provide the same conditions via URL and SDK call
+			foreach($urlConditions as $paramName => $paramValue){
+				if(array_key_exists($paramName, $conditions)){
+					throw new Exception('Either provide '.$paramName.' parameter via url, or via SDK, cannot have both');
+				}
+			}
+			
+			# Merge SDK conditions and URL conditions
+			$conditions = array_merge($conditions, $urlConditions);
+		}
+		
+		return $urlEndpoint . '?'.http_build_query($conditions);
 	}
 
 }
