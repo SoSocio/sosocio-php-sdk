@@ -16,6 +16,8 @@ class sosocio_base{
 	protected $apiKey;
 	# API user secret
 	protected $apiSecret;
+	# API bundle certificate for SSL
+	protected $bundleCertificate;
 	
 	# Curl timeout
 	protected $curlTimeOut = 60;
@@ -44,12 +46,13 @@ class sosocio_base{
 	 */
 	public function getDefaultCurlOptions(){
 		return array(
-			CURLOPT_CONNECTTIMEOUT => 10,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_TIMEOUT        => $this->curlTimeOut,
-			CURLOPT_USERAGENT      => 'sosocio',
-			CURLOPT_HEADER => true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest')
+			CURLOPT_CONNECTTIMEOUT	=> 10,
+			CURLOPT_RETURNTRANSFER	=> true,
+			CURLOPT_TIMEOUT			=> $this->curlTimeOut,
+			CURLOPT_USERAGENT		=> 'sosocio',
+			CURLOPT_HEADER 			=> true,
+			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest'),
+			CURLOPT_CAINFO			=> $this->bundleCertificate
 		);
 	}
 
