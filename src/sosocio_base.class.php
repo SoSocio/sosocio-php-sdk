@@ -274,7 +274,7 @@ class sosocio_base{
 			
 			# Debugging info: SDK users cannot provide the same conditions via URL and SDK call
 			foreach($urlConditions as $paramName => $paramValue){
-				if(array_key_exists($paramName,$urlConditions) && array_key_exists($paramName, $conditions)){
+				if(array_key_exists($paramName, $conditions)){
 					throw new Exception('Either provide '.$paramName.' parameter via url, or via SDK, cannot have both');
 				}
 			}
