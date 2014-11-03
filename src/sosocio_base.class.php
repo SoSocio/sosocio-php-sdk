@@ -85,7 +85,7 @@ class sosocio_base{
 		return $finalUrl;
 	}
 	
-	private function handleError(){
+	private function handleError($ch){
 
 		$error = array();
 		if(is_array($this->result)){
@@ -95,7 +95,7 @@ class sosocio_base{
 				}
 			}
 		}
-		else{
+		else {
 			throw new Exception('Error occured on the api');
 		}
 
@@ -141,7 +141,8 @@ class sosocio_base{
 				$i = 0;
 				$arrFiles = array();
 				foreach($files as $file){
-					$arrFiles['file'.$i] = '@'.$file['tmp_name'];
+					$postFieldOption = $this->getCurlValue($file['tmp_name'], 'image/jpeg', $file['name']);
+					$arrFiles['file'.$i] = $postFieldOption;//'@'.$file['tmp_name'];
 					$i++;
 				}
 				$curlOptions[CURLOPT_POSTFIELDS] = $arrFiles;
@@ -155,6 +156,22 @@ class sosocio_base{
 
 		# Return curl options
 		return $curlOptions;
+	}
+	
+	private function getCurlValue($filename, $contentType, $postname) {
+	    // PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
+	    // See: https://wiki.php.net/rfc/curl-file-upload
+	    if (function_exists('curl_file_create')) {
+	        return curl_file_create($filename, $contentType, $postname);
+	    }
+	
+	    // Use the old style if using an older version of PHP
+	    $value = "@{$filename};filename=" . $postname;
+	    if ($contentType) {
+	        $value .= ';type=' . $contentType;
+	    }
+	
+	    return $value;
 	}
 	
 	/**
@@ -229,7 +246,7 @@ class sosocio_base{
 		$this->decodeJSON($result);
 
 		# Uses the result set in the decodeJSON method
-		$this->handleError();
+		$this->handleError($ch);
 		
 		# Close curl request
 	    curl_close($ch);
