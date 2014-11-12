@@ -98,6 +98,11 @@ class sosocio_base{
 			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
 		}
 		
+		if($curlError = curl_error($ch)){
+			throw new Exception($curlError);
+		}
+
+		
 		if(is_array($this->result)){
 			foreach($this->result as $result){
 				if(is_array($result) && array_key_exists('error',$result)){
