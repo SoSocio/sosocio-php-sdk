@@ -22,6 +22,9 @@ class sosocio_base{
 	# Curl timeout
 	protected $curlTimeOut = 60;
 	
+	# Http codes used to check for errors
+	public $httpCodes = array(200,201);
+	
 	# Total record count api
 	public $totalRecords;
 	
@@ -88,6 +91,18 @@ class sosocio_base{
 	private function handleError($ch){
 
 		$error = array();
+		
+		$curlInfo = curl_getinfo($ch);
+		
+		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
+			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
+		}
+		
+		if($curlError = curl_error($ch)){
+			throw new Exception($curlError);
+		}
+
+		
 		if(is_array($this->result)){
 			foreach($this->result as $result){
 				if(is_array($result) && array_key_exists('error',$result)){
