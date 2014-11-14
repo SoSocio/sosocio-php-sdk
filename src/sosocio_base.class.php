@@ -94,14 +94,13 @@ class sosocio_base{
 		
 		$curlInfo = curl_getinfo($ch);
 		
-		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
-			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
-		}
-		
 		if($curlError = curl_error($ch)){
 			throw new Exception($curlError);
 		}
 
+		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
+			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
+		}
 		
 		if(is_array($this->result)){
 			foreach($this->result as $result){
