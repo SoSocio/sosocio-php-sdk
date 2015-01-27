@@ -155,7 +155,8 @@ class sosocio_base{
 				$i = 0;
 				$arrFiles = array();
 				foreach($files as $file){
-					$postFieldOption = $this->getCurlValue($file['tmp_name'], 'image/jpeg', $file['name']);
+					$finfo = finfo_open(FILEINFO_MIME_TYPE);
+					$postFieldOption = $this->getCurlValue($file['tmp_name'], finfo_file($finfo,$file['tmp_name']), $file['name']);
 					$arrFiles['file'.$i] = $postFieldOption;//'@'.$file['tmp_name'];
 					$i++;
 				}
