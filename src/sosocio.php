@@ -7,6 +7,7 @@ class sosocio extends sosocio_base{
 		$this->serverUrl	  = $config['apiUrl'];
 		$this->apiKey		  = $config['apiKey'];
 		$this->apiSecret	  = $config['apiSecret'];
+		$this->mimeType		  = $config['mimeType'];
 		
 		if(isset($config['bundleCertificate'])) {
 			$this->bundleCertificate = $config['bundleCertificate'];
