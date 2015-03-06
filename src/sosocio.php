@@ -7,7 +7,6 @@ class sosocio extends sosocio_base{
 		$this->serverUrl	  = $config['apiUrl'];
 		$this->apiKey		  = $config['apiKey'];
 		$this->apiSecret	  = $config['apiSecret'];
-		$this->mimeType		  = $config['mimeType'];
 		
 		if(isset($config['bundleCertificate'])) {
 			$this->bundleCertificate = $config['bundleCertificate'];
@@ -61,6 +60,10 @@ class sosocio extends sosocio_base{
 		else{
 			$this->curlTimeOut = $timeout;
 		}
+	}
+	
+	public function setMimeType($mimeType='application/json'){
+		$this->mimeType	= $mimeType;
 	}
 }
 ?>
