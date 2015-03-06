@@ -19,6 +19,8 @@ class sosocio_base{
 	# API bundle certificate for SSL
 	protected $bundleCertificate;
 	
+	protected $mimeType = 'application/json';
+	
 	# Curl timeout
 	protected $curlTimeOut = 60;
 	
@@ -35,7 +37,7 @@ class sosocio_base{
 	
 	# Request data
 	private $arrData;
-
+	
 	# Default request parameters
 	private $defaultData = 	array(
 		'options'	=>	array(),
@@ -54,7 +56,7 @@ class sosocio_base{
 			CURLOPT_TIMEOUT			=> $this->curlTimeOut,
 			CURLOPT_USERAGENT		=> 'sosocio',
 			CURLOPT_HEADER 			=> true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest'),
+			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType),
 			CURLOPT_CAINFO			=> $this->bundleCertificate
 		);
 	}
@@ -257,12 +259,20 @@ class sosocio_base{
 		# Format headers		
 	    $this->formatResponseHeaders();
 	    
-	    # Decode the result set
-		$this->decodeJSON($result);
+	    switch($this->mimeType){
+	    	case 'application/json':
+			    # Decode the result set
+				$this->decodeJSON($result);
+				
+				# Uses the result set in the decodeJSON method
+				$this->handleError($ch);
+				
+				break;
+			case 'text/csv':
+				$this->result = $result;
+				break;
+		}
 
-		# Uses the result set in the decodeJSON method
-		$this->handleError($ch);
-		
 		# Close curl request
 	    curl_close($ch);
 	}
