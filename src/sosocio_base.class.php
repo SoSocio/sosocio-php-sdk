@@ -10,6 +10,48 @@ if (!function_exists('json_decode') || !function_exists('json_encode')) {
 
 class sosocio_base{
 	
+	const
+		HTTP_100='Continue',
+		HTTP_101='Switching Protocols',
+		HTTP_200='OK',
+		HTTP_201='Created',
+		HTTP_202='Accepted',
+		HTTP_203='Non-Authorative Information',
+		HTTP_204='No Content',
+		HTTP_205='Reset Content',
+		HTTP_206='Partial Content',
+		HTTP_300='Multiple Choices',
+		HTTP_301='Moved Permanently',
+		HTTP_302='Found',
+		HTTP_303='See Other',
+		HTTP_304='Not Modified',
+		HTTP_305='Use Proxy',
+		HTTP_307='Temporary Redirect',
+		HTTP_400='Bad Request',
+		HTTP_401='Unauthorized',
+		HTTP_402='Payment Required',
+		HTTP_403='Forbidden',
+		HTTP_404='Not Found',
+		HTTP_405='Method Not Allowed',
+		HTTP_406='Not Acceptable',
+		HTTP_407='Proxy Authentication Required',
+		HTTP_408='Request Timeout',
+		HTTP_409='Conflict',
+		HTTP_410='Gone',
+		HTTP_411='Length Required',
+		HTTP_412='Precondition Failed',
+		HTTP_413='Request Entity Too Large',
+		HTTP_414='Request-URI Too Long',
+		HTTP_415='Unsupported Media Type',
+		HTTP_416='Requested Range Not Satisfiable',
+		HTTP_417='Expectation Failed',
+		HTTP_500='Internal Server Error',
+		HTTP_501='Not Implemented',
+		HTTP_502='Bad Gateway',
+		HTTP_503='Service Unavailable',
+		HTTP_504='Gateway Timeout',
+		HTTP_505='HTTP Version Not Supported';
+	
 	# API endpoint
 	protected $serverUrl;
 	# API user key
@@ -92,36 +134,19 @@ class sosocio_base{
 	
 	private function handleError($ch){
 
-		$error = array();
-		
 		$curlInfo = curl_getinfo($ch);
-		
+
 		if($curlError = curl_error($ch)){
 			throw new Exception($curlError);
 		}
 
 		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
-			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
-		}
-		
-		if(is_array($this->result)){
-			foreach($this->result as $result){
-				if(is_array($result) && array_key_exists('error',$result)){
-					array_push($error,$result['error']);
-				}
-			}
-		}
-		else {
-			throw new Exception('Error occured on the api');
-		}
-
-		if(!count($error)){
-			if(array_key_exists('error',$this->result)){
-				throw new Exception(implode("\r\n",$this->result['error']));	
-			}
-		}
-		else{
-			throw new Exception(implode("\r\n",$error));	
+			$code = $curlInfo['http_code'];
+			$reason=@constant('self::HTTP_'.$code);
+			if (PHP_SAPI!='cli')
+				header('HTTP/1.1 '.$code.' '.$reason);
+				echo $reason;
+			exit;
 		}
 	}
 	
@@ -258,16 +283,14 @@ class sosocio_base{
 
 		# Format headers		
 	    $this->formatResponseHeaders();
+
+	    # Checks for http codes
+	    $this->handleError($ch);
+	    
+		# Decode the result set
+		$this->decodeJSON($result);
 	    
 	    switch($this->mimeType){
-	    	case 'application/json':
-			    # Decode the result set
-				$this->decodeJSON($result);
-				
-				# Uses the result set in the decodeJSON method
-				$this->handleError($ch);
-				
-				break;
 			case 'text/csv':
 				$this->result = $result;
 				break;
