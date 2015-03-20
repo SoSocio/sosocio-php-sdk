@@ -286,6 +286,10 @@ class sosocio_base{
 				# Decode JSON and set result array to result property
 				$this->result = json_decode($result,true);
 				break;
+			default:
+				# Decode JSON and set result array to result property
+				$this->result = json_decode($result,true);
+				break;
 		}
 
 		# Close curl request
