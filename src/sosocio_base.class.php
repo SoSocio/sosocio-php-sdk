@@ -151,15 +151,6 @@ class sosocio_base{
 	}
 	
 	/**
-	 * Decode JSON result from API
-	 * 
-	 */
-	private function decodeJSON($result){
-		# Decode JSON and set result array to result property
-		$this->result = json_decode($result,true);
-	}
-
-	/**
 	 * Set Curl options for request
 	 * 
 	 * @return array curl options
@@ -287,12 +278,13 @@ class sosocio_base{
 	    # Checks for http codes
 	    $this->handleError($ch);
 	    
-		# Decode the result set
-		$this->decodeJSON($result);
-	    
 	    switch($this->mimeType){
 			case 'text/csv':
 				$this->result = $result;
+				break;
+			case 'application/json':
+				# Decode JSON and set result array to result property
+				$this->result = json_decode($result,true);
 				break;
 		}
 
