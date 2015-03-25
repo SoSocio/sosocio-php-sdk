@@ -61,5 +61,14 @@ class sosocio extends sosocio_base{
 			$this->curlTimeOut = $timeout;
 		}
 	}
+	
+	/**
+	* Set accept header mimetype
+	* 
+	* @param string $mimeType
+	*/
+	public function setMimeType($mimeType='application/json'){
+		$this->mimeType	= $mimeType;
+	}
 }
 ?>
