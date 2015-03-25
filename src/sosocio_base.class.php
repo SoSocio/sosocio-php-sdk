@@ -85,6 +85,9 @@ class sosocio_base{
 		'options'	=>	array(),
 		'inputdata'	=>	array()
 	);
+	
+	private $result;
+	protected $error;
 
 	/**
 	 * Get default curl options for request
@@ -132,7 +135,7 @@ class sosocio_base{
 		return $finalUrl;
 	}
 	
-	private function handleError($ch){
+	private function handleError($ch, $result){
 
 		$curlInfo = curl_getinfo($ch);
 
@@ -142,10 +145,14 @@ class sosocio_base{
 
 		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
 			$code = $curlInfo['http_code'];
-			$reason=@constant('self::HTTP_'.$code);
-			if (PHP_SAPI!='cli')
-				header('HTTP/1.1 '.$code.' '.$reason);
-				echo $reason;
+			if (PHP_SAPI!='cli') {
+				$this->error = array(
+					'code' => $code,
+					'text' => trim($result)
+				);
+			}
+			
+			throw new \Exception($code.': '.$result);
 			exit;
 		}
 	}
@@ -276,7 +283,7 @@ class sosocio_base{
 	    $this->formatResponseHeaders();
 
 	    # Checks for http codes
-	    $this->handleError($ch);
+	    $this->handleError($ch, $result);
 	    
 	    switch($this->mimeType){
 			case 'text/csv':

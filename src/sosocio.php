@@ -26,7 +26,6 @@ class sosocio extends sosocio_base{
 	 * @return array result: the result set from the API request
 	 */
 	public function api($url,$method='GET',$args=array()) {
-		
 		$params = array(
 			'method' => $method
 		);
@@ -69,6 +68,13 @@ class sosocio extends sosocio_base{
 	*/
 	public function setMimeType($mimeType='application/json'){
 		$this->mimeType	= $mimeType;
+	}
+	
+	/**
+	 * Get error returned by api
+	*/
+	public function getError() {
+		return $this->error;
 	}
 }
 ?>
