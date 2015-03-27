@@ -99,7 +99,7 @@ class sosocio_base{
 		$curlInfo = curl_getinfo($ch);
 
 		if($curlError = curl_error($ch)){
-			throw new Exception($curlError . $curlInfo['url']);
+			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
 		}
 
 		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
@@ -111,7 +111,7 @@ class sosocio_base{
 				);
 			}
 			
-			throw new \Exception($code.': '.$result. 'url:'.$curlInfo['url']);
+			throw new \Exception('HTTP status code '.$code.' returned at '.$curlInfo['url'].' | response: '.$result);
 			exit;
 		}
 	}
