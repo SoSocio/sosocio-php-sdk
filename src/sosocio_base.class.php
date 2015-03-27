@@ -94,14 +94,7 @@ class sosocio_base{
 		return $finalUrl;
 	}
 	
-	private function handleError($ch, $result){
-
-		$curlInfo = curl_getinfo($ch);
-
-		if($curlError = curl_error($ch)){
-			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
-		}
-
+	private function handleError($curlInfo, $result) {
 		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
 			$code = $curlInfo['http_code'];
 			if (PHP_SAPI!='cli') {
@@ -241,8 +234,16 @@ class sosocio_base{
 		# Format headers		
 	    $this->formatResponseHeaders();
 
-	    # Checks for http codes
-	    $this->handleError($ch, $result);
+		# Get curl info
+		$curlInfo = curl_getinfo($ch);
+
+	    # Check for curl execution error
+	    if($curlError = curl_error($ch)){
+			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
+		}
+	    
+		# Checks for http codes
+	    $this->handleError($curlInfo, $result);
 	    
 	    switch($this->mimeType){
 			case 'text/csv':
