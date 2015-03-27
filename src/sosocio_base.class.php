@@ -19,6 +19,9 @@ class sosocio_base{
 	# API bundle certificate for SSL
 	protected $bundleCertificate;
 	
+	# Mimetype for requests	
+	protected $mimeType = 'application/json';
+	
 	# Curl timeout
 	protected $curlTimeOut = 60;
 	
@@ -35,12 +38,15 @@ class sosocio_base{
 	
 	# Request data
 	private $arrData;
-
+	
 	# Default request parameters
 	private $defaultData = 	array(
 		'options'	=>	array(),
 		'inputdata'	=>	array()
 	);
+	
+	private $result;
+	protected $error;
 
 	/**
 	 * Get default curl options for request
@@ -54,7 +60,7 @@ class sosocio_base{
 			CURLOPT_TIMEOUT			=> $this->curlTimeOut,
 			CURLOPT_USERAGENT		=> 'sosocio',
 			CURLOPT_HEADER 			=> true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest'),
+			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType),
 			CURLOPT_CAINFO			=> $this->bundleCertificate
 		);
 	}
@@ -88,50 +94,28 @@ class sosocio_base{
 		return $finalUrl;
 	}
 	
-	private function handleError($ch){
+	private function handleError($ch, $result){
 
-		$error = array();
-		
 		$curlInfo = curl_getinfo($ch);
-		
+
 		if($curlError = curl_error($ch)){
-			throw new Exception($curlError);
+			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
 		}
 
 		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
-			throw new Exception('Http error code '.$curlInfo['http_code'].' on requested url: '.$curlInfo['url']);
-		}
-		
-		if(is_array($this->result)){
-			foreach($this->result as $result){
-				if(is_array($result) && array_key_exists('error',$result)){
-					array_push($error,$result['error']);
-				}
+			$code = $curlInfo['http_code'];
+			if (PHP_SAPI!='cli') {
+				$this->error = array(
+					'code' => $code,
+					'text' => trim($result)
+				);
 			}
-		}
-		else {
-			throw new Exception('Error occured on the api');
-		}
-
-		if(!count($error)){
-			if(array_key_exists('error',$this->result)){
-				throw new Exception(implode("\r\n",$this->result['error']));	
-			}
-		}
-		else{
-			throw new Exception(implode("\r\n",$error));	
+			
+			throw new \Exception('HTTP status code '.$code.' returned at '.$curlInfo['url'].' | response: '.$result);
+			exit;
 		}
 	}
 	
-	/**
-	 * Decode JSON result from API
-	 * 
-	 */
-	private function decodeJSON($result){
-		# Decode JSON and set result array to result property
-		$this->result = json_decode($result,true);
-	}
-
 	/**
 	 * Set Curl options for request
 	 * 
@@ -155,7 +139,8 @@ class sosocio_base{
 				$i = 0;
 				$arrFiles = array();
 				foreach($files as $file){
-					$postFieldOption = $this->getCurlValue($file['tmp_name'], 'image/jpeg', $file['name']);
+					$finfo = finfo_open(FILEINFO_MIME_TYPE);
+					$postFieldOption = $this->getCurlValue($file['tmp_name'], finfo_file($finfo,$file['tmp_name']), $file['name']);
 					$arrFiles['file'.$i] = $postFieldOption;//'@'.$file['tmp_name'];
 					$i++;
 				}
@@ -255,13 +240,24 @@ class sosocio_base{
 
 		# Format headers		
 	    $this->formatResponseHeaders();
-	    
-	    # Decode the result set
-		$this->decodeJSON($result);
 
-		# Uses the result set in the decodeJSON method
-		$this->handleError($ch);
-		
+	    # Checks for http codes
+	    $this->handleError($ch, $result);
+	    
+	    switch($this->mimeType){
+			case 'text/csv':
+				$this->result = $result;
+				break;
+			case 'application/json':
+				# Decode JSON and set result array to result property
+				$this->result = json_decode($result,true);
+				break;
+			default:
+				# Decode JSON and set result array to result property
+				$this->result = json_decode($result,true);
+				break;
+		}
+
 		# Close curl request
 	    curl_close($ch);
 	}
