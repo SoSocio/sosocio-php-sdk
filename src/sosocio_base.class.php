@@ -107,8 +107,7 @@ class sosocio_base{
 			if (PHP_SAPI!='cli') {
 				$this->error = array(
 					'code' => $code,
-					'text' => trim($result),
-					'url' => $curlInfo['url']
+					'text' => trim($result)
 				);
 			}
 			
