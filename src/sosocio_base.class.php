@@ -104,7 +104,7 @@ class sosocio_base{
 				);
 			}
 			
-			throw new \Exception('HTTP status code '.$code.' returned at '.$curlInfo['url'].' | response: '.$result);
+			throw new \Exception($result);
 			exit;
 		}
 	}
