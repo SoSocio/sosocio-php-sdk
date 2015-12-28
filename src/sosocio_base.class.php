@@ -92,7 +92,7 @@ class sosocio_base{
 	}
 	
 	private function handleError($curlInfo, $result) {
-		if($curlInfo['http_code'] >= 200 && $curlInfo['http_code'] < 300){
+		if($curlInfo['http_code'] < 200 || $curlInfo['http_code'] >= 300){
 			$code = $curlInfo['http_code'];
 			if (PHP_SAPI!='cli') {
 				$this->error = array(
