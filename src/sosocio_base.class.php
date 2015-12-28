@@ -24,10 +24,7 @@ class sosocio_base{
 	
 	# Curl timeout
 	protected $curlTimeOut = 60;
-	
-	# Http codes used to check for errors
-	public $httpCodes = array(200,201);
-	
+
 	# Total record count api
 	public $totalRecords;
 	
@@ -95,7 +92,7 @@ class sosocio_base{
 	}
 	
 	private function handleError($curlInfo, $result) {
-		if(!in_array($curlInfo['http_code'],$this->httpCodes)){
+		if($curlInfo['http_code'] >= 200 && $curlInfo['http_code'] < 300){
 			$code = $curlInfo['http_code'];
 			if (PHP_SAPI!='cli') {
 				$this->error = array(
@@ -251,11 +248,11 @@ class sosocio_base{
 				break;
 			case 'application/json':
 				# Decode JSON and set result array to result property
-				$this->result = json_decode($result,true);
+				$this->result = $result ? json_decode($result,true) : array();
 				break;
 			default:
 				# Decode JSON and set result array to result property
-				$this->result = json_decode($result,true);
+				$this->result = $result ? json_decode($result,true) : array();
 				break;
 		}
 
