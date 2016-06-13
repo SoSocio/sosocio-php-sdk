@@ -18,6 +18,8 @@ class sosocio_base{
 	protected $apiSecret;
 	# API bundle certificate for SSL
 	protected $bundleCertificate;
+	# When debugging is enabled, no error is thrown when API call fails
+	protected $debug = FALSE;
 	
 	# Mimetype for requests	
 	protected $mimeType = 'application/json';
@@ -101,8 +103,10 @@ class sosocio_base{
 				);
 			}
 			
-			throw new \Exception($result);
-			exit;
+			if(!$this->debug) {
+				throw new \Exception($result);
+				exit;
+			}
 		}
 	}
 	
@@ -235,7 +239,7 @@ class sosocio_base{
 		$curlInfo = curl_getinfo($ch);
 
 	    # Check for curl execution error
-	    if($curlError = curl_error($ch)){
+	    if($curlError = curl_error($ch) && !$this->debug){
 			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
 		}
 	    
