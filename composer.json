@@ -1,5 +1,5 @@
 {
-	"name": "SoSocio/sosocio-php-sdk",
+	"name": "sosocio/sosocio-php-sdk",
 	"type": "library",
 	"description": "Make API requests to Sosocio",
 	"require": {
