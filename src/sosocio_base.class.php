@@ -319,4 +319,3 @@ class sosocio_base{
 	}
 
 }
-?>
