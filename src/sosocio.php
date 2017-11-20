@@ -30,6 +30,9 @@ class sosocio extends sosocio_base{
 	 * @return array result: the result set from the API request
 	 */
 	public function api($url,$method='GET',$args=array()) {
+		# Reset error data
+		$this->error = null;
+
 		$params = array(
 			'method' => $method
 		);
