@@ -100,11 +100,11 @@ class sosocio_base{
 			$code = $curlInfo['http_code'];
 			if (PHP_SAPI!='cli') {
 				$this->error = array(
-					'code' => $errorResult
-						? $errorResult['code']
+					'code' => $errorResult && isset($errorResult['error'])
+						? $errorResult['error']['code']
 						: $code,
-					'text' => $errorResult
-						? $errorResult['message']
+					'message' => $errorResult && isset($errorResult['error'])
+						? $errorResult['error']['message']
 						: trim($result)
 				);
 			}
