@@ -94,12 +94,18 @@ class sosocio_base{
 	}
 
 	private function handleError($curlInfo, $result) {
+		$errorResult = json_decode($result, true);
+
 		if($curlInfo['http_code'] < 200 || $curlInfo['http_code'] >= 300){
 			$code = $curlInfo['http_code'];
 			if (PHP_SAPI!='cli') {
 				$this->error = array(
-					'code' => $code,
-					'text' => trim($result)
+					'code' => $errorResult
+						? $errorResult['code']
+						: $code,
+					'text' => $errorResult
+						? $errorResult['message']
+						: trim($result)
 				);
 			}
 
