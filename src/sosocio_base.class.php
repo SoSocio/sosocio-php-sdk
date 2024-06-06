@@ -12,9 +12,18 @@ class sosocio_base{
 
 	# API endpoint
 	protected $serverUrl;
-	# API user key
+	/**
+	 * @var string
+	 * API user key
+	 * Set as X-Api-Key header
+	 */
 	protected $apiKey;
-	# API user secret
+	# 
+	/**
+	 * @var string
+	 * API user secret
+	 * Deprecated
+	 */
 	protected $apiSecret;
 	# API bundle certificate for SSL
 	protected $bundleCertificate;
@@ -53,13 +62,21 @@ class sosocio_base{
 	 * @return array curl options
 	 */
 	public function getDefaultCurlOptions(){
+		$curlHttpHeaders = array();
+		if ($this->apiKey && $this->apiSecret){
+			$curlHttpHeaders = array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType);
+		}
+		if ($this->apiKey){
+			$curlHttpHeaders = array('X-Api-Key:'.$this->apiKey,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType);
+		}
+		$curlHttpHeaders = array();
 		return array(
 			CURLOPT_CONNECTTIMEOUT	=> 10,
 			CURLOPT_RETURNTRANSFER	=> true,
 			CURLOPT_TIMEOUT			=> $this->curlTimeOut,
 			CURLOPT_USERAGENT		=> 'sosocio',
 			CURLOPT_HEADER 			=> true,
-			CURLOPT_HTTPHEADER		=> array('apiKey:'.$this->apiKey,'apiSecret:'.$this->apiSecret,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType),
+			CURLOPT_HTTPHEADER		=> $curlHttpHeaders,
 			CURLOPT_CAINFO			=> $this->bundleCertificate
 		);
 	}
