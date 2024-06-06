@@ -9,7 +9,6 @@ Examples:
 $config = array(
   'apiUrl' => 'https://sosocio.com/api',
   'apiKey' => 'myApiKey',
-  'apiSecret' => 'myApiSecret'
 );
 $sosocio = new sosocio($config);
 
