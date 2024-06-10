@@ -69,7 +69,7 @@ class sosocio_base{
 		if ($this->apiKey){
 			$curlHttpHeaders = array('X-Api-Key:'.$this->apiKey,'X-Requested-With:XMLHttpRequest','Accept:'.$this->mimeType);
 		}
-		$curlHttpHeaders = array();
+
 		return array(
 			CURLOPT_CONNECTTIMEOUT	=> 10,
 			CURLOPT_RETURNTRANSFER	=> true,
