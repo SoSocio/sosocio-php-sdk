@@ -282,9 +282,6 @@ class sosocio_base{
 				$this->result = $result ? json_decode($result,true) : array();
 				break;
 		}
-
-		# Close curl request
-	    curl_close($ch);
 	}
 
 	/**
