@@ -4,8 +4,15 @@ class sosocio extends sosocio_base{
 
 	public function __construct($config = array()){
 
-		$this->serverUrl	  = $config['apiUrl'];
-		$this->apiKey		  = $config['apiKey'];
+		if (!isset($config['apiUrl'])) {
+			throw new Exception('Please provide an apiUrl in the SDK config');
+		}
+		$this->serverUrl = $config['apiUrl'];
+
+		if (!isset($config['apiKey'])) {
+			throw new Exception('Please provide an apiKey in the SDK config');
+		}
+		$this->apiKey = $config['apiKey'];
 
 		if (isset($config['apiSecret'])) {
 			$this->apiSecret = $config['apiSecret'];

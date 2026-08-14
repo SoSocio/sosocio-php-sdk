@@ -262,7 +262,7 @@ class sosocio_base{
 		$curlInfo = curl_getinfo($ch);
 
 	    # Check for curl execution error
-	    if($curlError = curl_error($ch) && !$this->debug){
+	    if(($curlError = curl_error($ch)) && !$this->debug){
 			throw new Exception($curlError . ' returned at ' . $curlInfo['url']);
 		}
 
